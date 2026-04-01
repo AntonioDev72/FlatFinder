@@ -1,0 +1,26 @@
+<div class="page" *ngIf="flat; else notFound">
+  <h2>Flat Details</h2>
+
+  <div class="card">
+    <p><strong>City:</strong> {{ flat.city }}</p>
+    <p><strong>Street Name:</strong> {{ flat.streetName }}</p>
+    <p><strong>Street Number:</strong> {{ flat.streetNumber }}</p>
+    <p><strong>Area Size:</strong> {{ flat.areaSize }} m²</p>
+    <p><strong>Has AC:</strong> {{ flat.hasAC ? 'Yes' : 'No' }}</p>
+    <p><strong>Year Built:</strong> {{ flat.yearBuilt }}</p>
+    <p><strong>Rent Price:</strong> ${{ flat.rentPrice }}</p>
+    <p><strong>Date Available:</strong> {{ flat.dateAvailable }}</p>
+    <p><strong>Owner:</strong> {{ flat.ownerName }}</p>
+    <p><strong>Owner Email:</strong> {{ flat.ownerEmail }}</p>
+  </div>
+
+  <a *ngIf="isOwner" [routerLink]="['/edit-flat', flat.id]" class="edit-btn">
+    Edit Flat
+  </a>
+</div>
+
+<ng-template #notFound>
+  <div class="page">
+    <h2>Flat not found</h2>
+  </div>
+</ng-template>

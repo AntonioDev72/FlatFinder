@@ -1,0 +1,47 @@
+<div class="page">
+  <h2>Edit Flat</h2>
+
+  <form [formGroup]="flatForm" (ngSubmit)="updateFlat()" class="form">
+    <label>
+      City
+      <input type="text" formControlName="city" />
+    </label>
+
+    <label>
+      Street Name
+      <input type="text" formControlName="streetName" />
+    </label>
+
+    <label>
+      Street Number
+      <input type="number" formControlName="streetNumber" />
+    </label>
+
+    <label>
+      Area Size
+      <input type="number" formControlName="areaSize" />
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="hasAC" />
+      Has AC
+    </label>
+
+    <label>
+      Year Built
+      <input type="number" formControlName="yearBuilt" />
+    </label>
+
+    <label>
+      Rent Price
+      <input type="number" formControlName="rentPrice" />
+    </label>
+
+    <label>
+      Date Available
+      <input type="date" formControlName="dateAvailable" />
+    </label>
+
+    <button type="submit">Update</button>
+  </form>
+</div>
