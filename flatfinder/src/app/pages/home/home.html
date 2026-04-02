@@ -1,0 +1,45 @@
+<div class="page">
+
+  <h1>Search Flats</h1>
+    <a routerLink="/new-flat" class="btn">
+    Insert New Flat
+  </a>
+
+  <div class="filters">
+    <input type="text" [(ngModel)]="city" placeholder="City">
+
+    <input type="number" [(ngModel)]="minPrice" placeholder="Min Price">
+
+    <input type="number" [(ngModel)]="maxPrice" placeholder="Max Price">
+
+    <button (click)="search()">Search</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>Street</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let flat of filteredFlats">
+        <td>{{ flat.city }}</td>
+        <td>{{ flat.streetName }}</td>
+        <td>{{ flat.rentPrice }}</td>
+
+        <td class="actions">
+          <a [routerLink]="['/viewflat', flat.id]" class="btn">View</a>
+
+          <button class="btn" (click)="toggleFavorite(flat)">
+            {{ flat.favourite ? '❤️' : '🤍' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

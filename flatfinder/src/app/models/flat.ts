@@ -11,4 +11,5 @@ export interface Flat {
   ownerId: string;
   ownerName: string;
   ownerEmail: string;
+  favourite?: boolean;
 }

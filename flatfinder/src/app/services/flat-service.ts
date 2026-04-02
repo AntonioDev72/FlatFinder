@@ -8,8 +8,11 @@ export class FlatService {
   private storageKey = 'flats';
 
   getAll(): Flat[] {
-    const data = localStorage.getItem(this.storageKey);
-    return data ? JSON.parse(data) : [];
+  return JSON.parse(localStorage.getItem('flats') || '[]');
+  }
+
+  saveAll(flats: Flat[]) {
+    localStorage.setItem('flats', JSON.stringify(flats));
   }
 
   getById(id: string): Flat | undefined {
@@ -21,12 +24,43 @@ export class FlatService {
     flats.push(flat);
     localStorage.setItem(this.storageKey, JSON.stringify(flats));
   }
+
   update(updatedFlat: Flat): void {
-    const flats = this.getAll();
-    const index = flats.findIndex(flat => flat.id === updatedFlat.id);
-    if (index !== -1) {
-      flats[index] = updatedFlat;
-      localStorage.setItem(this.storageKey, JSON.stringify(flats));
-    }
+    const flats = this.getAll().map(flat =>
+      flat.id === updatedFlat.id ? updatedFlat : flat
+    );
+    localStorage.setItem(this.storageKey, JSON.stringify(flats));
   }
+
+  delete(id: string): void {
+    const flats = this.getAll().filter(flat => flat.id !== id);
+    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  }
+
+  getMyFlats(ownerId: string): Flat[] {
+    return this.getAll().filter(flat => flat.ownerId === ownerId);
+  }
+
+  getFavourites(): Flat[] {
+    return this.getAll().filter(flat => flat.favourite);
+  }
+
+  toggleFavourite(id: string): void {
+    const flats = this.getAll().map(flat =>
+      flat.id === id
+        ? { ...flat, isFavourite: !flat.favourite }
+        : flat
+    );
+    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  }
+
+  removeFavourite(id: string): void {
+    const flats = this.getAll().map(flat =>
+      flat.id === id
+        ? { ...flat, isFavourite: false }
+        : flat
+    );
+    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  }
+  
 }

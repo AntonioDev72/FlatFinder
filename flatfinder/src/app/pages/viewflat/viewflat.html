@@ -12,8 +12,10 @@
     <p><strong>Date Available:</strong> {{ flat.dateAvailable }}</p>
     <p><strong>Owner:</strong> {{ flat.ownerName }}</p>
     <p><strong>Owner Email:</strong> {{ flat.ownerEmail }}</p>
+    <button *ngIf="flat" type="button" (click)="toggleFavourite()">
+    {{ flat.favourite ? 'Remove Favourite' : 'Add Favourite' }}
+    </button>
   </div>
-
   <a *ngIf="isOwner" [routerLink]="['/edit-flat', flat.id]" class="edit-btn">
     Edit Flat
   </a>

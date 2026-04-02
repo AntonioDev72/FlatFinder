@@ -1,0 +1,40 @@
+<div class="page">
+  <h2>Favourites</h2>
+
+  <table *ngIf="favouriteFlats.length > 0; else emptyState">
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>Street</th>
+        <th>Number</th>
+        <th>Area</th>
+        <th>AC</th>
+        <th>Year</th>
+        <th>Rent</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let flat of favouriteFlats">
+        <td>{{ flat.city }}</td>
+        <td>{{ flat.streetName }}</td>
+        <td>{{ flat.streetNumber }}</td>
+        <td>{{ flat.areaSize }}</td>
+        <td>{{ flat.hasAC ? 'Yes' : 'No' }}</td>
+        <td>{{ flat.yearBuilt }}</td>
+        <td>{{ flat.rentPrice }}</td>
+        <td>{{ flat.dateAvailable }}</td>
+        <td class="actions">
+          <a [routerLink]="['/viewflat', flat.id]" class="action-btn">View</a>
+          <button type="button" class="action-btn" (click)="removeFavourite(flat.id)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #emptyState>
+    <p>No favourite flats yet.</p>
+  </ng-template>
+</div>

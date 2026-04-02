@@ -30,4 +30,9 @@ export class ViewFlatComponent implements OnInit {
   get isOwner(): boolean {
     return !!this.flat && this.flat.ownerId === this.currentUserId;
   }
+  toggleFavourite(): void {
+  if (!this.flat) return;
+  this.flatService.toggleFavourite(this.flat.id);
+  this.flat = this.flatService.getById(this.flat.id);
+}
 }

@@ -1,0 +1,44 @@
+<div class="page">
+  <div class="header">
+    <h2>My Flats</h2>
+    <a routerLink="/new-flat" class="btn">Insert New Flat</a>
+  </div>
+
+  <table *ngIf="myFlats.length > 0; else emptyState">
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>Street</th>
+        <th>Number</th>
+        <th>Area</th>
+        <th>AC</th>
+        <th>Year</th>
+        <th>Rent</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let flat of myFlats">
+        <td>{{ flat.city }}</td>
+        <td>{{ flat.streetName }}</td>
+        <td>{{ flat.streetNumber }}</td>
+        <td>{{ flat.areaSize }}</td>
+        <td>{{ flat.hasAC ? 'Yes' : 'No' }}</td>
+        <td>{{ flat.yearBuilt }}</td>
+        <td>{{ flat.rentPrice }}</td>
+        <td>{{ flat.dateAvailable }}</td>
+        <td class="actions">
+          <a [routerLink]="['/viewflat', flat.id]" class="action-btn">View</a>
+          <a [routerLink]="['/editflat', flat.id]" class="action-btn">Edit</a>
+          <button type="button" class="action-btn" (click)="deleteFlat(flat.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #emptyState>
+    <p>You do not have any flats yet.</p>
+  </ng-template>
+</div>
