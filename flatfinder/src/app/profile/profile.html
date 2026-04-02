@@ -1,0 +1,12 @@
+<h2>Perfil</h2>
+
+<form (ngSubmit)="updateProfile()">
+  <input type="text" [(ngModel)]="firstName" name="firstName" placeholder="First Name" required>
+  <input type="text" [(ngModel)]="lastName" name="lastName" placeholder="Last Name" required>
+  <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required>
+  <input type="date" [(ngModel)]="birthDate" name="birthDate" required>
+  <input type="password" [(ngModel)]="password" name="password" placeholder="New Password">
+  <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+
+  <button type="submit">Update Profile</button>
+</form>
