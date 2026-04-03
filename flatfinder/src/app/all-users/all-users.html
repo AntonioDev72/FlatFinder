@@ -1,0 +1,24 @@
+<h2>Todos Usuários (Admin)</h2>
+
+<div *ngIf="currentUserIsAdmin; else notAdmin">
+  <table border="1">
+    <tr>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Flats</th>
+      <th>Admin</th>
+      <th>Ações</th>
+    </tr>
+    <tr *ngFor="let user of users">
+      <td>{{user.firstName}} {{user.lastName}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.flatsCount}}</td>
+      <td>{{user.isAdmin ? 'Sim' : 'Não'}}</td>
+      <td><button (click)="viewProfile(user)">Ver Perfil</button></td>
+    </tr>
+  </table>
+</div>
+
+<ng-template #notAdmin>
+  <p>Acesso negado. Apenas administradores podem ver essa página.</p>
+</ng-template>

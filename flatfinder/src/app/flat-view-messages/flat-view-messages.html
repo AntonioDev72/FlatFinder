@@ -1,0 +1,14 @@
+<h2>Flat Messages</h2>
+
+<ul>
+  <li *ngFor="let msg of filteredMessages">
+    <b>{{msg.sender}} ({{msg.email}}):</b> {{msg.text}} <i>({{msg.timestamp | date:'short'}})</i>
+  </li>
+</ul>
+
+<form *ngIf="currentUser !== flatOwner" (ngSubmit)="sendMessage()">
+  <input type="text" [(ngModel)]="newMessage" name="msg" placeholder="Enter your message" required>
+  <button type="submit">Send</button>
+</form>
+<p *ngIf="currentUser === flatOwner">You are the owner of the flat and cannot send messages here.</p>
+
