@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-<<<<<<< HEAD
+
   "private": true,
   "packageManager": "npm@11.8.0",
   "dependencies": {
@@ -30,9 +30,7 @@
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
-  }
-}
-=======
+  },
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
@@ -44,26 +42,5 @@
         }
       }
     ]
-  },
-  "private": true,
-  "packageManager": "npm@10.8.2",
-  "dependencies": {
-    "@angular/common": "^21.1.0",
-    "@angular/compiler": "^21.1.0",
-    "@angular/core": "^21.1.0",
-    "@angular/forms": "^21.1.0",
-    "@angular/platform-browser": "^21.1.0",
-    "@angular/router": "^21.1.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@angular/build": "^21.1.2",
-    "@angular/cli": "^21.1.2",
-    "@angular/compiler-cli": "^21.1.0",
-    "jsdom": "^27.1.0",
-    "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
   }
 }
->>>>>>> origin/dev-b
