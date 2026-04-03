@@ -24,6 +24,7 @@ export const appRoutes: Routes = [
   { path: 'new-flat', component: NewFlatComponent },
   { path: 'flat/:id', component: ViewFlatComponent },
   { path: 'edit-flat/:id', component: EditFlatComponent },
+  { path: 'viewflat/:id', component: ViewFlatComponent },
   { path: 'myflats', component: MyflatsComponent },
   { path: 'favourites', component: FavouritesComponent },
 

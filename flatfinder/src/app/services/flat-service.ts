@@ -1,66 +1,45 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Flat } from '../models/flat';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlatService {
-  private storageKey = 'flats';
+  private apiUrl = 'http://localhost:3000/api/flats';
 
-  getAll(): Flat[] {
-  return JSON.parse(localStorage.getItem('flats') || '[]');
+  constructor(private http: HttpClient) {}
+
+  getAll(): Observable<Flat[]> {
+    return this.http.get<Flat[]>(this.apiUrl);
   }
 
-  saveAll(flats: Flat[]) {
-    localStorage.setItem('flats', JSON.stringify(flats));
+  getById(id: string): Observable<Flat> {
+    return this.http.get<Flat>(`${this.apiUrl}/${id}`);
   }
 
-  getById(id: string): Flat | undefined {
-    return this.getAll().find(flat => flat.id === id);
+  create(flat: Flat): Observable<Flat> {
+    return this.http.post<Flat>(this.apiUrl, flat);
   }
 
-  create(flat: Flat): void {
-    const flats = this.getAll();
-    flats.push(flat);
-    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  update(id: string, flat: Flat): Observable<Flat> {
+    return this.http.put<Flat>(`${this.apiUrl}/${id}`, flat);
   }
 
-  update(updatedFlat: Flat): void {
-    const flats = this.getAll().map(flat =>
-      flat.id === updatedFlat.id ? updatedFlat : flat
-    );
-    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  delete(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  delete(id: string): void {
-    const flats = this.getAll().filter(flat => flat.id !== id);
-    localStorage.setItem(this.storageKey, JSON.stringify(flats));
+  getMyFlats(ownerId: string): Observable<Flat[]> {
+    return this.http.get<Flat[]>(`${this.apiUrl}?ownerId=${ownerId}`);
   }
 
-  getMyFlats(ownerId: string): Flat[] {
-    return this.getAll().filter(flat => flat.ownerId === ownerId);
+  getFavourites(userId: string): Observable<Flat[]> {
+    return this.http.get<Flat[]>(`${this.apiUrl}?favouriteUserId=${userId}`);
   }
 
-  getFavourites(): Flat[] {
-    return this.getAll().filter(flat => flat.favourite);
+  toggleFavourite(id: string, userId: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/favourite`, { userId });
   }
-
-  toggleFavourite(id: string): void {
-    const flats = this.getAll().map(flat =>
-      flat.id === id
-        ? { ...flat, isFavourite: !flat.favourite }
-        : flat
-    );
-    localStorage.setItem(this.storageKey, JSON.stringify(flats));
-  }
-
-  removeFavourite(id: string): void {
-    const flats = this.getAll().map(flat =>
-      flat.id === id
-        ? { ...flat, isFavourite: false }
-        : flat
-    );
-    localStorage.setItem(this.storageKey, JSON.stringify(flats));
-  }
-  
 }

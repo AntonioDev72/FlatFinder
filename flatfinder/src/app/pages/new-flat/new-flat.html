@@ -5,25 +5,25 @@
     <label>
       City
       <input type="text" formControlName="city" />
-      <small *ngIf="f.city.touched && f.city.invalid">City is required.</small>
+      <small *ngIf="f['city'].touched && f['city'].invalid">City is required.</small>
     </label>
 
     <label>
       Street Name
       <input type="text" formControlName="streetName" />
-      <small *ngIf="f.streetName.touched && f.streetName.invalid">Street name is required.</small>
+      <small *ngIf="f['streetName'].touched && f['streetName'].invalid">Street name is required.</small>
     </label>
 
     <label>
       Street Number
       <input type="number" formControlName="streetNumber" />
-      <small *ngIf="f.streetNumber.touched && f.streetNumber.invalid">Valid street number is required.</small>
+      <small *ngIf="f['streetNumber'].touched && f['streetNumber'].invalid">Valid street number is required.</small>
     </label>
 
     <label>
       Area Size
       <input type="number" formControlName="areaSize" />
-      <small *ngIf="f.areaSize.touched && f.areaSize.invalid">Valid area size is required.</small>
+      <small *ngIf="f['areaSize'].touched && f['areaSize'].invalid">Valid area size is required.</small>
     </label>
 
     <label class="checkbox">
@@ -34,19 +34,19 @@
     <label>
       Year Built
       <input type="number" formControlName="yearBuilt" />
-      <small *ngIf="f.yearBuilt.touched && f.yearBuilt.invalid">Valid year is required.</small>
+      <small *ngIf="f['yearBuilt'].touched && f['yearBuilt'].invalid">Valid year is required.</small>
     </label>
 
     <label>
       Rent Price
       <input type="number" formControlName="rentPrice" />
-      <small *ngIf="f.rentPrice.touched && f.rentPrice.invalid">Valid rent price is required.</small>
+      <small *ngIf="f['rentPrice'].touched && f['rentPrice'].invalid">Valid rent price is required.</small>
     </label>
 
     <label>
       Date Available
       <input type="date" formControlName="dateAvailable" />
-      <small *ngIf="f.dateAvailable.touched && f.dateAvailable.invalid">Date available is required.</small>
+      <small *ngIf="f['dateAvailable'].touched && f['dateAvailable'].invalid">Date available is required.</small>
     </label>
 
     <button type="submit">Save</button>

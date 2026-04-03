@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
@@ -14,7 +14,7 @@ import { Flat } from '../../models/flat';
 })
 export class NewFlatComponent {
   submitted = false;
-  flatForm!: FormGroup;
+  flatForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +42,6 @@ export class NewFlatComponent {
     }
 
     const newFlat: Flat = {
-      id: crypto.randomUUID(),
       city: this.flatForm.value.city!,
       streetName: this.flatForm.value.streetName!,
       streetNumber: Number(this.flatForm.value.streetNumber),
@@ -56,23 +55,19 @@ export class NewFlatComponent {
       ownerEmail: 'antonio@example.com'
     };
 
-    this.flatService.create(newFlat);
-      alert('Flat saved successfully!');
-
-    this.flatForm.reset({
-      city: '',
-      streetName: '',
-      streetNumber: null,
-      areaSize: null,
-      hasAC: false,
-      yearBuilt: null,
-      rentPrice: null,
-      dateAvailable: ''
+    this.flatService.create(newFlat).subscribe({
+      next: () => {
+        alert('Flat saved successfully!');
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error saving flat');
+      }
     });
-    this.router.navigate(['/']);
   }
 
-  get f(): any {
+  get f() {
     return this.flatForm.controls;
   }
 }

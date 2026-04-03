@@ -13,6 +13,7 @@ import { Flat } from '../../models/flat';
 })
 export class FavouritesComponent implements OnInit {
   favouriteFlats: Flat[] = [];
+  currentUserId = 'user-1';
 
   constructor(private flatService: FlatService) {}
 
@@ -21,11 +22,24 @@ export class FavouritesComponent implements OnInit {
   }
 
   loadFavourites(): void {
-    this.favouriteFlats = this.flatService.getFavourites();
+    this.flatService.getFavourites(this.currentUserId).subscribe({
+      next: (flats) => {
+        this.favouriteFlats = flats;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 
   removeFavourite(id: string): void {
-    this.flatService.removeFavourite(id);
-    this.loadFavourites();
+    this.flatService.toggleFavourite(id, this.currentUserId).subscribe({
+      next: () => {
+        this.loadFavourites();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 }

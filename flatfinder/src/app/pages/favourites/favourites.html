@@ -1,17 +1,22 @@
-<div class="page">
-  <h2>Favourites</h2>
+<div class="favourites-page">
+  <h2>My Favourite Flats</h2>
 
-  <table *ngIf="favouriteFlats.length > 0; else emptyState">
+  <div *ngIf="favouriteFlats.length === 0">
+    <p>No favourite flats yet.</p>
+  </div>
+
+  <table *ngIf="favouriteFlats.length > 0">
     <thead>
       <tr>
         <th>City</th>
         <th>Street</th>
-        <th>Number</th>
-        <th>Area</th>
+        <th>Street No.</th>
+        <th>Area Size</th>
         <th>AC</th>
-        <th>Year</th>
-        <th>Rent</th>
-        <th>Date</th>
+        <th>Year Built</th>
+        <th>Rent Price</th>
+        <th>Date Available</th>
+        <th>Owner</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -25,16 +30,13 @@
         <td>{{ flat.hasAC ? 'Yes' : 'No' }}</td>
         <td>{{ flat.yearBuilt }}</td>
         <td>{{ flat.rentPrice }}</td>
-        <td>{{ flat.dateAvailable }}</td>
-        <td class="actions">
-          <a [routerLink]="['/viewflat', flat.id]" class="action-btn">View</a>
-          <button type="button" class="action-btn" (click)="removeFavourite(flat.id)">Remove</button>
+        <td>{{ flat.dateAvailable | date }}</td>
+        <td>{{ flat.ownerName }} ({{ flat.ownerEmail }})</td>
+        <td>
+          <a *ngIf="flat._id" [routerLink]="['/viewflat', flat._id]" class="action-btn">View</a>
+          <button *ngIf="flat._id" class="action-btn" (click)="removeFavourite(flat._id)">Remove</button>
         </td>
       </tr>
     </tbody>
   </table>
-
-  <ng-template #emptyState>
-    <p>No favourite flats yet.</p>
-  </ng-template>
 </div>

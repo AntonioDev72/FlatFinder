@@ -22,14 +22,27 @@ export class MyflatsComponent implements OnInit {
   }
 
   loadMyFlats(): void {
-    this.myFlats = this.flatService.getMyFlats(this.currentUserId);
+    this.flatService.getMyFlats(this.currentUserId).subscribe({
+      next: (flats) => {
+        this.myFlats = flats;
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 
   deleteFlat(id: string): void {
     const confirmed = confirm('Do you want to delete this flat?');
     if (!confirmed) return;
 
-    this.flatService.delete(id);
-    this.loadMyFlats();
+    this.flatService.delete(id).subscribe({
+      next: () => {
+        this.loadMyFlats();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 }

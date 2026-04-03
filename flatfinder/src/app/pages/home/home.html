@@ -32,10 +32,10 @@
         <td>{{ flat.rentPrice }}</td>
 
         <td class="actions">
-          <a [routerLink]="['/viewflat', flat.id]" class="btn">View</a>
+          <a *ngIf="flat._id" [routerLink]="['/viewflat', flat._id]" class="btn">View</a>
 
-          <button class="btn" (click)="toggleFavorite(flat)">
-            {{ flat.favourite ? '❤️' : '🤍' }}
+          <button class="btn" (click)="toggleFavourite(flat)">
+            {{ isFavourite(flat) ? '❤️' : '🤍' }}
           </button>
         </td>
       </tr>

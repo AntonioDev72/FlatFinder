@@ -1,5 +1,5 @@
 export interface Flat {
-  id: string;
+  _id?: string;
   city: string;
   streetName: string;
   streetNumber: number;
@@ -11,5 +11,5 @@ export interface Flat {
   ownerId: string;
   ownerName: string;
   ownerEmail: string;
-  favourite?: boolean;
+  favouriteBy?: string[];
 }

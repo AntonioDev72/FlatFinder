@@ -1,20 +1,23 @@
-<div class="page">
-  <div class="header">
-    <h2>My Flats</h2>
-    <a routerLink="/new-flat" class="btn">Insert New Flat</a>
+<div class="myflats-page">
+  <h2>My Flats</h2>
+
+  <a routerLink="/new-flat" class="action-btn">Insert New Flat</a>
+
+  <div *ngIf="myFlats.length === 0">
+    <p>You have not added any flats yet.</p>
   </div>
 
-  <table *ngIf="myFlats.length > 0; else emptyState">
+  <table *ngIf="myFlats.length > 0">
     <thead>
       <tr>
         <th>City</th>
         <th>Street</th>
-        <th>Number</th>
-        <th>Area</th>
+        <th>Street No.</th>
+        <th>Area Size</th>
         <th>AC</th>
-        <th>Year</th>
-        <th>Rent</th>
-        <th>Date</th>
+        <th>Year Built</th>
+        <th>Rent Price</th>
+        <th>Date Available</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -28,17 +31,13 @@
         <td>{{ flat.hasAC ? 'Yes' : 'No' }}</td>
         <td>{{ flat.yearBuilt }}</td>
         <td>{{ flat.rentPrice }}</td>
-        <td>{{ flat.dateAvailable }}</td>
-        <td class="actions">
-          <a [routerLink]="['/viewflat', flat.id]" class="action-btn">View</a>
-          <a [routerLink]="['/editflat', flat.id]" class="action-btn">Edit</a>
-          <button type="button" class="action-btn" (click)="deleteFlat(flat.id)">Delete</button>
+        <td>{{ flat.dateAvailable | date }}</td>
+        <td>
+          <a *ngIf="flat._id" [routerLink]="['/viewflat', flat._id]" class="action-btn">View</a>
+          <a *ngIf="flat._id" [routerLink]="['/editflat', flat._id]" class="action-btn">Edit</a>
+          <button *ngIf="flat._id" class="action-btn" (click)="deleteFlat(flat._id)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
-
-  <ng-template #emptyState>
-    <p>You do not have any flats yet.</p>
-  </ng-template>
 </div>
