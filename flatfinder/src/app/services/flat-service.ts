@@ -1,45 +1,109 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  collectionData,
+  deleteDoc,
+  doc,
+  docData,
+  getDoc,
+  query,
+  updateDoc,
+  where,
+  orderBy
+} from 'firebase/firestore';
+import { firestore } from '../firebase';
+import { Observable, from } from 'rxjs';
 import { Flat } from '../models/flat';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlatService {
-  private apiUrl = 'http://localhost:3000/api/flats';
+  private flatsCollection = collection(firestore, 'flats');
 
-  constructor(private http: HttpClient) {}
+  getAll(filters?: {
+    city?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    minArea?: number;
+    maxArea?: number;
+    sortBy?: 'city' | 'rentPrice' | 'areaSize';
+  }): Observable<Flat[]> {
+    let q = query(this.flatsCollection, orderBy('createdAt', 'desc'));
 
-  getAll(): Observable<Flat[]> {
-    return this.http.get<Flat[]>(this.apiUrl);
+    if (filters?.city) {
+      q = query(q, where('city', '==', filters.city));
+    }
+    if (filters?.minPrice != null) {
+      q = query(q, where('rentPrice', '>=', filters.minPrice));
+    }
+    if (filters?.maxPrice != null) {
+      q = query(q, where('rentPrice', '<=', filters.maxPrice));
+    }
+    if (filters?.minArea != null) {
+      q = query(q, where('areaSize', '>=', filters.minArea));
+    }
+    if (filters?.maxArea != null) {
+      q = query(q, where('areaSize', '<=', filters.maxArea));
+    }
+
+    return collectionData(q, { idField: '_id' }) as Observable<Flat[]>;
   }
 
   getById(id: string): Observable<Flat> {
-    return this.http.get<Flat>(`${this.apiUrl}/${id}`);
+    return docData(doc(firestore, 'flats', id), { idField: '_id' }) as Observable<Flat>;
   }
 
-  create(flat: Flat): Observable<Flat> {
-    return this.http.post<Flat>(this.apiUrl, flat);
+  create(flat: Flat): Promise<Flat> {
+    return addDoc(this.flatsCollection, {
+      ...flat,
+      favouriteBy: flat.favouriteBy ?? [],
+      createdAt: new Date()
+    }).then((docRef) => ({ ...flat, _id: docRef.id }));
   }
 
-  update(id: string, flat: Flat): Observable<Flat> {
-    return this.http.put<Flat>(`${this.apiUrl}/${id}`, flat);
+  update(id: string, flat: Flat): Promise<void> {
+    return updateDoc(doc(firestore, 'flats', id), {
+      city: flat.city,
+      streetName: flat.streetName,
+      streetNumber: flat.streetNumber,
+      areaSize: flat.areaSize,
+      hasAC: flat.hasAC,
+      yearBuilt: flat.yearBuilt,
+      rentPrice: flat.rentPrice,
+      dateAvailable: flat.dateAvailable,
+      ownerId: flat.ownerId,
+      ownerName: flat.ownerName,
+      ownerEmail: flat.ownerEmail
+    });
   }
 
-  delete(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  delete(id: string): Promise<void> {
+    return deleteDoc(doc(firestore, 'flats', id));
   }
 
-  getMyFlats(ownerId: string): Observable<Flat[]> {
-    return this.http.get<Flat[]>(`${this.apiUrl}?ownerId=${ownerId}`);
+  async toggleFavourite(id: string, userId: string): Promise<void> {
+    const flatRef = doc(firestore, 'flats', id);
+    const flatSnapshot = await getDoc(flatRef);
+    const data = flatSnapshot.data() as Flat | undefined;
+    const currentFavourites = data?.favouriteBy ?? [];
+
+    if (currentFavourites.includes(userId)) {
+      return updateDoc(flatRef, { favouriteBy: arrayRemove(userId) });
+    }
+    return updateDoc(flatRef, { favouriteBy: arrayUnion(userId) });
   }
 
   getFavourites(userId: string): Observable<Flat[]> {
-    return this.http.get<Flat[]>(`${this.apiUrl}?favouriteUserId=${userId}`);
+    const q = query(this.flatsCollection, where('favouriteBy', 'array-contains', userId));
+    return collectionData(q, { idField: '_id' }) as Observable<Flat[]>;
   }
 
-  toggleFavourite(id: string, userId: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/favourite`, { userId });
+  getMyFlats(ownerId: string): Observable<Flat[]> {
+    const q = query(this.flatsCollection, where('ownerId', '==', ownerId), orderBy('createdAt', 'desc'));
+    return collectionData(q, { idField: '_id' }) as Observable<Flat[]>;
   }
 }

@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
+import { UserService } from '../services/user.service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-all-users',
@@ -9,15 +12,33 @@ import { Router } from '@angular/router';
   templateUrl: './all-users.html',
   styleUrls: ['./all-users.scss']
 })
-export class AllUsersComponent {
-  currentUserIsAdmin = true;
-  constructor(private router: Router) {}
-  users = [
-    { firstName: 'Lucas', lastName: 'Sartori', email: 'lucas@email.com', flatsCount: 2, isAdmin: true },
-    { firstName: 'Augusto', lastName: 'Pioner', email: 'augusto@email.com', flatsCount: 1, isAdmin: false }
-  ];
+export class AllUsersComponent implements OnInit {
+  currentUserIsAdmin = false;
+  users: User[] = [];
 
-  viewProfile(user: any) {
-    this.router.navigate(['/profile']);
-}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUserIsAdmin = !!user?.isAdmin;
+      if (this.currentUserIsAdmin) {
+        this.userService.getAllUsers().subscribe({
+          next: (users) => {
+            this.users = users;
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      }
+    });
+  }
+
+  viewProfile(user: User) {
+    this.router.navigate(['/profile', user.uid]);
+  }
 }

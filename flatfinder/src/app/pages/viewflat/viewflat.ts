@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
 
@@ -17,10 +18,14 @@ export class ViewFlatComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private authService: AuthService,
     private flatService: FlatService
   ) {}
 
   ngOnInit(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUserId = user?.uid ?? '';
+    });
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
@@ -39,24 +44,22 @@ export class ViewFlatComponent implements OnInit {
     return !!this.flat && this.flat.ownerId === this.currentUserId;
   }
 
-  toggleFavourite(): void {
-    if (!this.flat?._id) return;
+  async toggleFavourite(): Promise<void> {
+    if (!this.flat?._id || !this.currentUserId) return;
 
-    this.flatService.toggleFavourite(this.flat._id, this.currentUserId).subscribe({
-      next: () => {
-        this.flatService.getById(this.flat!._id!).subscribe({
-          next: (updatedFlat) => {
-            this.flat = updatedFlat;
-          },
-          error: (err) => {
-            console.error(err);
-          }
-        });
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    try {
+      await this.flatService.toggleFavourite(this.flat._id, this.currentUserId);
+      this.flatService.getById(this.flat._id).subscribe({
+        next: (updatedFlat) => {
+          this.flat = updatedFlat;
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   isFavourite(): boolean {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
 
@@ -13,15 +14,23 @@ import { Flat } from '../../models/flat';
 })
 export class MyflatsComponent implements OnInit {
   myFlats: Flat[] = [];
-  currentUserId = 'user-1';
+  currentUserId = '';
 
-  constructor(private flatService: FlatService) {}
+  constructor(private flatService: FlatService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadMyFlats();
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUserId = user?.uid ?? '';
+      this.loadMyFlats();
+    });
   }
 
   loadMyFlats(): void {
+    if (!this.currentUserId) {
+      this.myFlats = [];
+      return;
+    }
+
     this.flatService.getMyFlats(this.currentUserId).subscribe({
       next: (flats) => {
         this.myFlats = flats;
@@ -32,17 +41,15 @@ export class MyflatsComponent implements OnInit {
     });
   }
 
-  deleteFlat(id: string): void {
+  async deleteFlat(id: string): Promise<void> {
     const confirmed = confirm('Do you want to delete this flat?');
     if (!confirmed) return;
 
-    this.flatService.delete(id).subscribe({
-      next: () => {
-        this.loadMyFlats();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    try {
+      await this.flatService.delete(id);
+      this.loadMyFlats();
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

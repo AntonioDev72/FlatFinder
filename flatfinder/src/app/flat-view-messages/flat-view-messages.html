@@ -1,14 +1,26 @@
-<h2>Flat Messages</h2>
+<div class="page">
+  <h2>Flat Messages</h2>
 
-<ul>
-  <li *ngFor="let msg of filteredMessages">
-    <b>{{msg.sender}} ({{msg.email}}):</b> {{msg.text}} <i>({{msg.timestamp | date:'short'}})</i>
-  </li>
-</ul>
+  <div *ngIf="flat">
+    <p><strong>Flat:</strong> {{ flat.city }}, {{ flat.streetName }} {{ flat.streetNumber }}</p>
+    <p><strong>Owner:</strong> {{ flat.ownerName }} ({{ flat.ownerEmail }})</p>
+  </div>
 
-<form *ngIf="currentUser !== flatOwner" (ngSubmit)="sendMessage()">
-  <input type="text" [(ngModel)]="newMessage" name="msg" placeholder="Enter your message" required>
-  <button type="submit">Send</button>
-</form>
-<p *ngIf="currentUser === flatOwner">You are the owner of the flat and cannot send messages here.</p>
+  <ul>
+    <li *ngFor="let msg of filteredMessages">
+      <b>{{ msg.senderName }} ({{ msg.senderEmail }}):</b>
+      {{ msg.text }}
+      <i>({{ msg.createdAt.toDate ? msg.createdAt.toDate() : msg.createdAt | date:'short' }})</i>
+    </li>
+  </ul>
+
+  <div *ngIf="!isOwner">
+    <form (ngSubmit)="sendMessage()">
+      <input type="text" [(ngModel)]="newMessage" name="msg" placeholder="Enter your message" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <p *ngIf="isOwner">You are the owner of the flat and can see all incoming messages here.</p>
+</div>
 

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -15,17 +16,21 @@ import { Flat } from '../../models/flat';
 export class HomeComponent implements OnInit {
   flats: Flat[] = [];
   filteredFlats: Flat[] = [];
-  currentUserId = 'user-1';
+  currentUserId = '';
 
   city = '';
   minPrice: number | null = null;
   maxPrice: number | null = null;
   minArea: number | null = null;
   maxArea: number | null = null;
+  sortBy: 'city' | 'rentPrice' | 'areaSize' | '' = '';
 
-  constructor(private flatService: FlatService) {}
+  constructor(private flatService: FlatService, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUserId = user?.uid ?? '';
+    });
     this.loadFlats();
   }
 
@@ -66,20 +71,32 @@ export class HomeComponent implements OnInit {
       result = result.filter(flat => flat.areaSize <= this.maxArea!);
     }
 
+    if (this.sortBy) {
+      result.sort((a, b) => {
+        if (this.sortBy === 'city') {
+          return a.city.localeCompare(b.city);
+        }
+        if (this.sortBy === 'rentPrice') {
+          return a.rentPrice - b.rentPrice;
+        }
+        return a.areaSize - b.areaSize;
+      });
+    }
+
     this.filteredFlats = result;
   }
 
-  toggleFavourite(flat: Flat): void {
-    if (!flat._id) return;
+  async toggleFavourite(flat: Flat): Promise<void> {
+    if (!flat._id || !this.currentUserId) {
+      return;
+    }
 
-    this.flatService.toggleFavourite(flat._id, this.currentUserId).subscribe({
-      next: () => {
-        this.loadFlats();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    try {
+      await this.flatService.toggleFavourite(flat._id, this.currentUserId);
+      this.loadFlats();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   isFavourite(flat: Flat): boolean {

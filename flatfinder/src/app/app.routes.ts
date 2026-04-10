@@ -12,22 +12,18 @@ import { MyflatsComponent } from './pages/myflats/myflats';
 import { FavouritesComponent } from './pages/favourites/favourites';
 
 export const appRoutes: Routes = [
-
   { path: '', component: HomeComponent },
-
-
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'profile/:id', component: ProfileComponent },
   { path: 'users', component: AllUsersComponent },
-  { path: 'messages', component: FlatViewMessagesComponent },
+  { path: 'messages/:id', component: FlatViewMessagesComponent },
   { path: 'new-flat', component: NewFlatComponent },
   { path: 'flat/:id', component: ViewFlatComponent },
   { path: 'edit-flat/:id', component: EditFlatComponent },
   { path: 'viewflat/:id', component: ViewFlatComponent },
   { path: 'myflats', component: MyflatsComponent },
   { path: 'favourites', component: FavouritesComponent },
-
-
   { path: '**', redirectTo: '' }
 ];

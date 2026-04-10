@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-new-flat',
@@ -12,12 +14,14 @@ import { Flat } from '../../models/flat';
   templateUrl: './new-flat.html',
   styleUrls: ['./new-flat.scss']
 })
-export class NewFlatComponent {
+export class NewFlatComponent implements OnInit {
+  currentUser: User | null = null;
   submitted = false;
   flatForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private flatService: FlatService,
     private router: Router
   ) {
@@ -33,11 +37,22 @@ export class NewFlatComponent {
     });
   }
 
-  saveFlat(): void {
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
+
+  async saveFlat(): Promise<void> {
     this.submitted = true;
 
     if (this.flatForm.invalid) {
       this.flatForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.currentUser?.uid) {
+      alert('You need to be logged in to add a new flat.');
       return;
     }
 
@@ -50,21 +65,19 @@ export class NewFlatComponent {
       yearBuilt: Number(this.flatForm.value.yearBuilt),
       rentPrice: Number(this.flatForm.value.rentPrice),
       dateAvailable: this.flatForm.value.dateAvailable!,
-      ownerId: 'user-1',
-      ownerName: 'Antonio Amaral',
-      ownerEmail: 'antonio@example.com'
+      ownerId: this.currentUser.uid,
+      ownerName: `${this.currentUser.firstName} ${this.currentUser.lastName}`,
+      ownerEmail: this.currentUser.email
     };
 
-    this.flatService.create(newFlat).subscribe({
-      next: () => {
-        alert('Flat saved successfully!');
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error saving flat');
-      }
-    });
+    try {
+      await this.flatService.create(newFlat);
+      alert('Flat saved successfully!');
+      this.router.navigate(['/']);
+    } catch (err) {
+      console.error(err);
+      alert('Error saving flat');
+    }
   }
 
   get f() {

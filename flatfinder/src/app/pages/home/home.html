@@ -1,17 +1,19 @@
 <div class="page">
-
   <h1>Search Flats</h1>
-    <a routerLink="/new-flat" class="btn">
-    Insert New Flat
-  </a>
+  <a routerLink="/new-flat" class="btn">Insert New Flat</a>
 
   <div class="filters">
-    <input type="text" [(ngModel)]="city" placeholder="City">
-
-    <input type="number" [(ngModel)]="minPrice" placeholder="Min Price">
-
-    <input type="number" [(ngModel)]="maxPrice" placeholder="Max Price">
-
+    <input type="text" [(ngModel)]="city" placeholder="City" />
+    <input type="number" [(ngModel)]="minPrice" placeholder="Min Price" />
+    <input type="number" [(ngModel)]="maxPrice" placeholder="Max Price" />
+    <input type="number" [(ngModel)]="minArea" placeholder="Min Area" />
+    <input type="number" [(ngModel)]="maxArea" placeholder="Max Area" />
+    <select [(ngModel)]="sortBy">
+      <option value="">Sort by</option>
+      <option value="city">City</option>
+      <option value="rentPrice">Price</option>
+      <option value="areaSize">Area Size</option>
+    </select>
     <button (click)="search()">Search</button>
   </div>
 
@@ -20,7 +22,11 @@
       <tr>
         <th>City</th>
         <th>Street</th>
-        <th>Price</th>
+        <th>Rent Price</th>
+        <th>Area</th>
+        <th>Year</th>
+        <th>Available</th>
+        <th>Owner</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -28,18 +34,19 @@
     <tbody>
       <tr *ngFor="let flat of filteredFlats">
         <td>{{ flat.city }}</td>
-        <td>{{ flat.streetName }}</td>
+        <td>{{ flat.streetName }} {{ flat.streetNumber }}</td>
         <td>{{ flat.rentPrice }}</td>
-
+        <td>{{ flat.areaSize }}</td>
+        <td>{{ flat.yearBuilt }}</td>
+        <td>{{ flat.dateAvailable | date }}</td>
+        <td>{{ flat.ownerName }} ({{ flat.ownerEmail }})</td>
         <td class="actions">
           <a *ngIf="flat._id" [routerLink]="['/viewflat', flat._id]" class="btn">View</a>
-
           <button class="btn" (click)="toggleFavourite(flat)">
-            {{ isFavourite(flat) ? '❤️' : '🤍' }}
+            {{ isFavourite(flat) ? 'Remove' : 'Favourite' }}
           </button>
         </td>
       </tr>
     </tbody>
   </table>
-
 </div>

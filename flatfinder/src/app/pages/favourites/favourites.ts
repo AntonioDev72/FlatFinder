@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 import { FlatService } from '../../services/flat-service';
 import { Flat } from '../../models/flat';
 
@@ -13,15 +14,23 @@ import { Flat } from '../../models/flat';
 })
 export class FavouritesComponent implements OnInit {
   favouriteFlats: Flat[] = [];
-  currentUserId = 'user-1';
+  currentUserId = '';
 
-  constructor(private flatService: FlatService) {}
+  constructor(private flatService: FlatService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadFavourites();
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUserId = user?.uid ?? '';
+      this.loadFavourites();
+    });
   }
 
   loadFavourites(): void {
+    if (!this.currentUserId) {
+      this.favouriteFlats = [];
+      return;
+    }
+
     this.flatService.getFavourites(this.currentUserId).subscribe({
       next: (flats) => {
         this.favouriteFlats = flats;
@@ -32,14 +41,12 @@ export class FavouritesComponent implements OnInit {
     });
   }
 
-  removeFavourite(id: string): void {
-    this.flatService.toggleFavourite(id, this.currentUserId).subscribe({
-      next: () => {
-        this.loadFavourites();
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+  async removeFavourite(id: string): Promise<void> {
+    try {
+      await this.flatService.toggleFavourite(id, this.currentUserId);
+      this.loadFavourites();
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

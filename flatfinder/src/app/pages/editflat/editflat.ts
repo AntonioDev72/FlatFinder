@@ -63,7 +63,7 @@ export class EditFlatComponent implements OnInit {
     }
   }
 
-  updateFlat(): void {
+  async updateFlat(): Promise<void> {
     if (this.flatForm.invalid || !this.currentFlat?._id) {
       this.flatForm.markAllAsTouched();
       return;
@@ -84,14 +84,12 @@ export class EditFlatComponent implements OnInit {
       ownerEmail: this.currentFlat.ownerEmail
     };
 
-    this.flatService.update(this.currentFlat._id, updatedFlat).subscribe({
-      next: () => {
-        this.router.navigate(['/myflats']);
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
+    try {
+      await this.flatService.update(this.currentFlat._id, updatedFlat);
+      this.router.navigate(['/myflats']);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   get f() {
